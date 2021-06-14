@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "shurlin",
+  "version": "${version}",
+
+  "name": "Shurlin",
+  "description": "Shurlin means the life spirit of the rare magic herbs.\nIt had 12 systems corresponding to 12 rare magic herbs, they're metal, wood, water, fire, earth, wind, light, darkness, poison, lightning, ice and space-time.",
+  "authors": [
+    "Garay Shurlin"
+  ],
+  "contributors": [
+    "teddyxlandlee"
+  ],
+  "contact": {
+    "homepage": "https://shurlin.xyz/"
+  },
+
+  "license": "LGPL-2.1",
+  "icon": "assets/shurlin/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "xyz.shurlin.Shurlin"
+    ],"client": [
+      "xyz.shurlin.ShurlinClient"
+    ]
+  },
+  "mixins": [
+    "shurlin.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": ">=0.32.7",
+    "minecraft": "1.17"
+  },
+  "suggests": {
+    "sweet_potato": ">1.2.1"
+  },
+  "custom": {
+    "Pigeonia Linkage Standard": {
+      "url": "https://featurehouse.github.io/pigeonia-linkage-standard/v1.0.0/STANDARD.txt",
+      "version": "v1.0.0"
+    }
+  }
+}
