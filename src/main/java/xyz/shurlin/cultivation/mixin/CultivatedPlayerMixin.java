@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,6 +30,7 @@ import xyz.shurlin.cultivation.spiritmanual.SpiritManuals;
 import xyz.shurlin.entity.damage.ShurlinDamageSource;
 import xyz.shurlin.item.cultivation.DantianItem;
 
+import java.util.Random;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -42,10 +44,15 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
         super(entityType, world);
     }
 
-    @Shadow public abstract boolean damage(DamageSource source, float amount);
+    @Shadow
+    public abstract boolean damage(DamageSource source, float amount);
 
-    @Shadow @Nullable
+    @Shadow
+    @Nullable
     public abstract ItemEntity dropItem(ItemStack stack, boolean throwRandomly, boolean retainOwnership);
+
+    @Shadow
+    public abstract Vec3d method_30951(float f);
 
     @Unique
     private CultivationRealms realm;
@@ -72,6 +79,12 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
     @Unique
     private Vector<SpiritManual> spiritManuals = new Vector<>();
     @Unique
+    private SpiritManual MainSM;
+    @Unique
+    private Vector<SpiritManual> AssistSM = new Vector<>();
+    @Unique
+    private Vector<SpiritManual> AttackSM = new Vector<>();
+    @Unique
     private SpiritManual currentSpiritManual;
     private float spirit_temp = 0;
 
@@ -86,10 +99,10 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
     }
 
     @Inject(at = @At("TAIL"), method = "tick")
-    private void tick(CallbackInfo ci){
-        if(spirit!=maxSpirit){
+    private void tick(CallbackInfo ci) {
+        if (spirit != maxSpirit) {
             spirit_temp += 0.2f;
-            if(spirit_temp==1.0f){
+            if (spirit_temp == 1.0f) {
                 heal();
                 spirit_temp = 0;
             }
@@ -97,45 +110,50 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
 
 //        System.out.println(1);
     }
-    
+
     @Inject(method = "onDeath", at = @At("TAIL"))
-    private void onDeath(DamageSource source, CallbackInfo ci){
-        if(!this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) && source != ShurlinDamageSource.BODY_EXPLOSION){
-            this.dropItem(toItemStack(),true, false);
+    private void onDeath(DamageSource source, CallbackInfo ci) {
+        if (!this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) && source != ShurlinDamageSource.BODY_EXPLOSION) {
+            this.dropItem(toItemStack(), true, false);
             origin();
         }
     }
 
-    public void origin(){
+    public void origin() {
         this.realm = null;
     }
 
-    public void cultivate(){
+    public void cultivate() {
+        Random random = new Random();
         this.realm = CultivationRealms.SOLDIER;
         this.rating = 1;
         init();
-        this.experience = Shurlin.random.nextInt((int)this.maxSpirit);
+        this.experience = Shurlin.random.nextInt((int) this.maxSpirit);
         this.spirit = this.maxSpirit / 2;
+        int sm_cnt = 0;
+        for (SpiritPropertyType type : SpiritPropertyType.GROUPS) {
+            meridians.put(type, random.nextFloat() < 0.2 ? new SpiritMeridians(type) : null);
+        }
     }
 
-    public void cultivate0(){
+    public void cultivate0() {
         this.realm = CultivationRealms.SOLDIER;
         this.rating = 1;
         init();
     }
 
-    void init(){
+    void init() {
         maxSpirit = CultivationMathHelper.getMaxSpirit(realm.getGradation(), rating);
         experienceForUpgrade = CultivationMathHelper.getExperienceForUpgrade(realm.getGradation(), rating);
         EntityAttributeInstance instance = this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-        if(instance != null){
+        if (instance != null) {
             if (instance.getModifier(ATTACK_ID) != null) {
                 instance.removeModifier(ATTACK_ID);
                 instance.addPersistentModifier(new EntityAttributeModifier(ATTACK_ID, "Cultivation Realm Addition", CultivationMathHelper.getAttack(this.realm.getGradation(), this.rating), EntityAttributeModifier.Operation.ADDITION));
             }
         }
         EntityAttributeInstance instance1 = this.getAttributeInstance(EntityAttributes.GENERIC_ARMOR);
-        if(instance1 != null){
+        if (instance1 != null) {
             if (instance1.getModifier(RESISTANCE_ID) != null) {
                 instance1.removeModifier(RESISTANCE_ID);
                 instance1.addPersistentModifier(new EntityAttributeModifier(RESISTANCE_ID, "Cultivation Realm Addition", CultivationMathHelper.getResistance(this.realm.getGradation(), this.rating), EntityAttributeModifier.Operation.ADDITION));
@@ -153,25 +171,27 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
             tag1.putLong("spirit", spirit);
             tag1.putLong("ex", experience);
             NbtCompound sma_tag = new NbtCompound();
-            sma_tag.putInt("cnt",this.spiritManuals.size());
+            sma_tag.putInt("cnt", this.spiritManuals.size());
             sma_tag.putShort("c", SpiritManuals.getId(currentSpiritManual));
-            for(int i=0;i<this.spiritManuals.size();i++){
+            for (int i = 0; i < this.spiritManuals.size(); i++) {
                 sma_tag.putShort(String.valueOf(i), SpiritManuals.getId(spiritManuals.elementAt(i)));
             }
             tag1.put("sma", sma_tag);
-//            int sm_cnt = 0;
-//            NbtCompound sm_tag = new NbtCompound();
-//            for (SpiritPropertyType type : SpiritPropertyType.GROUPS) {
-//                sm_tag.put(String.valueOf(sm_cnt++), meridians.get(type).toTag());
-//            }
-//            tag1.put("sm", sm_tag);
+            int sm_cnt = 0;
+            NbtCompound sm_tag = new NbtCompound();
+            for (SpiritPropertyType type : SpiritPropertyType.GROUPS) {
+                if (meridians.get(type) != null)
+                    sm_tag.put(String.valueOf(sm_cnt++), meridians.get(type).toTag());
+            }
+            sm_tag.putInt("cnt", sm_cnt);
+            tag1.put("sm", sm_tag);
         } else
             tag1.putBoolean("isCultivated", false);
         return tag1;
     }
 
     @Unique
-    private ItemStack toItemStack(){
+    private ItemStack toItemStack() {
         return new ItemStack(new DantianItem().init(this));
     }
 
@@ -182,7 +202,6 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
 //        byteBuf.writeNbt(tag);
 //        ServerPlayNetworking.send((ServerPlayerEntity) this.inventory.player, Utils.CULTIVATION_DATA, byteBuf);
     }
-
 
 
     @Override
@@ -200,29 +219,29 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
         experience = tag.getLong("ex");
         NbtCompound sma_tag = tag.getCompound("sma_tag");
         this.currentSpiritManual = SpiritManuals.getSpiritManual(sma_tag.getShort("c"));
-        for(int i=0;i<sma_tag.getInt("cnt");i++){
+        for (int i = 0; i < sma_tag.getInt("cnt"); i++) {
             this.spiritManuals.add(SpiritManuals.getSpiritManual(sma_tag.getShort(String.valueOf(i))));
         }
-//        NbtCompound sm_tag = tag.getCompound("sm");
-//        int sm_cnt = 0;
-//        for (SpiritPropertyType type : SpiritPropertyType.GROUPS) {
-//            meridians.put(type, SpiritMeridians.fromTag(type, sm_tag.getCompound(String.valueOf(sm_cnt++))));
-//        }
+        NbtCompound sm_tag = tag.getCompound("sm");
+        for (int sm_cnt = 0; sm_cnt < sm_tag.getInt("cnt"); sm_cnt++) {
+            SpiritMeridians.fromTag(meridians, sm_tag.getCompound(String.valueOf(sm_cnt++)));
+        }
+
+
         init();
     }
 
-    public void upgrade(){
-        if(best())
+    public void upgrade() {
+        if (best())
             return;
-        if(rating == realm.getMaxRating()){
+        if (rating == realm.getMaxRating()) {
             this.realm = realm.getNextGradation();
             this.rating = 1;
-        }
-        else rating++;
+        } else rating++;
     }
-    
-    private void heal(){
-        long spirit = (this.maxSpirit>>8)*healTimes;
+
+    private void heal() {
+        long spirit = (this.maxSpirit >> 8) * healTimes;
         if (spirit + this.spirit > maxSpirit) {
             this.spirit = maxSpirit;
         } else {
@@ -237,27 +256,28 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
 
     @Override
     public String getSpiritText() {
-        return SpiritConsistences.getDescribe(this.spirit)+'/'+SpiritConsistences.getDescribe(this.maxSpirit);
+        return SpiritConsistences.getDescribe(this.spirit) + '/' + SpiritConsistences.getDescribe(this.maxSpirit);
     }
 
     @Override
     public String getExperimentText() {
-        return SpiritConsistences.getDescribe(this.experience)+'/'+SpiritConsistences.getDescribe(this.experienceForUpgrade);
+        return SpiritConsistences.getDescribe(this.experience) + '/' + SpiritConsistences.getDescribe(this.experienceForUpgrade);
     }
 
-    public boolean best(){
+    public boolean best() {
         return this.realm.getGradation() == 12 && this.rating == 18;
     }
 
     public void up(long spirit) {
-        if(spirit + this.spirit > 2 * maxSpirit && !this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)){
+        if (spirit + this.spirit > 2 * maxSpirit && !this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
             System.out.println(3);
             this.damage(ShurlinDamageSource.BODY_EXPLOSION, Float.MAX_VALUE);
             System.out.println(4);
             return;
-        }if (spirit + this.spirit > maxSpirit) {
+        }
+        if (spirit + this.spirit > maxSpirit) {
             this.experience += spirit + this.spirit - this.maxSpirit;
-            if(this.experience >= this.experienceForUpgrade){
+            if (this.experience >= this.experienceForUpgrade) {
                 this.experience = 0;
                 upgrade();
                 init();
@@ -268,9 +288,9 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
         }
     }
 
-    public void healWithDantian(long spirit){
+    public void healWithDantian(long spirit) {
         cultivate0();
-        while(spirit >= this.experienceForUpgrade){
+        while (spirit >= this.experienceForUpgrade) {
             spirit -= experienceForUpgrade;
             upgrade();
             init();
@@ -376,10 +396,10 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
 
     @Override
     public boolean consume(long spirit) {
-        if(this.spirit-spirit<0)
+        if (this.spirit - spirit < 0)
             return false;
         else {
-            this.spirit-=spirit;
+            this.spirit -= spirit;
             return true;
         }
     }
@@ -392,16 +412,16 @@ public abstract class CultivatedPlayerMixin extends LivingEntity implements Cult
     @Override
     public long getTotalSpirit() {
         long total = 0;
-        for(short i = CultivationRealms.SOLDIER.getGradation(); i<=this.realm.getGradation();i++){
-            for(short j = 1; j <= ((i==this.realm.getGradation())?this.rating:CultivationRealms.getRealmByGradation(i).getMaxRating());j++){
-                total += CultivationMathHelper.getMaxSpirit(i,j);
+        for (short i = CultivationRealms.SOLDIER.getGradation(); i <= this.realm.getGradation(); i++) {
+            for (short j = 1; j <= ((i == this.realm.getGradation()) ? this.rating : CultivationRealms.getRealmByGradation(i).getMaxRating()); j++) {
+                total += CultivationMathHelper.getMaxSpirit(i, j);
             }
         }
         return total;
     }
 
-    public boolean appendSpiritManual(SpiritManual spiritManual){
-        if(this.spiritManuals.contains(spiritManual) || this.realm == null)
+    public boolean appendSpiritManual(SpiritManual spiritManual) {
+        if (this.spiritManuals.contains(spiritManual) || this.realm == null)
             return false;
         else {
             this.spiritManuals.add(spiritManual);

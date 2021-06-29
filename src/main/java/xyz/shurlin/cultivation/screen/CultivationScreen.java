@@ -109,7 +109,7 @@ public class CultivationScreen extends ShurlinScreen<CultivationScreenHandler> {
         }else if(state == -1){
 
         }else if(state == -2){
-            //TODO
+            this.textRenderer.draw(matrices, Texts.GONGFA, this.x+ 10, this.y+10, COLOR);//TODO
         }
 //        Class r = RenderSystem.class;
 //        r.getField("")
@@ -167,9 +167,9 @@ public class CultivationScreen extends ShurlinScreen<CultivationScreenHandler> {
         int y = this.y + disY + order * 22 + (order > 2 ? 1 : 0);
         int u = lr ? 0 : width;
         int v = 200 + order * height;
-        double percentage1 = meridians.getCurSpirit() / meridians.getMaxSpirit();
+//        double percentage1 = meridians.getCurSpirit() / meridians.getMaxSpirit();
         double percentage2 = meridians.getCurEx() / meridians.getMaxEx();
-        this.drawTexture(matrices, x, y, u, v, (int) (width * percentage1), height);
+//        this.drawTexture(matrices, x, y, u, v, (int) (width * percentage1), height);
         this.drawTexture(matrices, x, y + 6, 122, 200, (int) (width * percentage2), height);
     }
 
@@ -187,22 +187,22 @@ public class CultivationScreen extends ShurlinScreen<CultivationScreenHandler> {
         if (button == 0) {
             double d = mouseX - (double) this.x;
             double e = mouseY - (double) this.y;
-            if (e < 25 && d > 25 && d <= 203) {
+            if (e > 0 && e < 25 && d > 25 && d <= 203) {
                 double d1 = d - 25;
                 int state = (int) (Math.floor(d1 / each) + 1);
                 if (state == this.state || d1 % each >= w)
                     return false;
                 this.state = state;
                 return true;
-            } else if (e >= 25 && e < 169 && d <= 25) {
+            } else if (e >= 25 && e < 169 && d>0&&d <= 25) {
                 double e1 = e - 25;
-                int state = (0 - (int) (Math.floor(e1 / each)));
+                int state = (-(int) (Math.floor(e1 / each)));
                 if (state == this.state || e1 % each >= w)
                     return false;
                 this.state = state;
                 return true;
 
-            } else if (e >= 169 && e < 184 && d <= 203) {
+            } else if (e >= 169 &&e<=194&& e < 184 && d <= 203) {
                 double d1 = d - 25;
                 int state = (int) (Math.floor(d1 / each) + 7);
                 if (state == this.state || d1 % each >= w)

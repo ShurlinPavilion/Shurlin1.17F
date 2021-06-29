@@ -9,8 +9,9 @@ public abstract class SpiritManual {
     private final ManualLevel level;
     private final long consume;
     private final SpiritManualType type;
+    private Request request;
 
-    SpiritManual(ManualLevel level, long consume, SpiritManualType type) {
+    public SpiritManual(ManualLevel level, long consume, SpiritManualType type) {
         this.level = level;
         this.consume = consume;
         this.type = type;
@@ -32,5 +33,11 @@ public abstract class SpiritManual {
 
     public SpiritManualType getType() {
         return type;
+    }
+
+    public class Request{
+        int gradation;
+        int rank;
+
     }
 }

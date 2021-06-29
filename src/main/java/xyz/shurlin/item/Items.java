@@ -90,12 +90,12 @@ public class Items {
 //    public static final Item DENSE_TIME_SPACE_SPIRIT;
     public static final Item INFERIOR_SPIRIT_STONE;
     public static final Item STANDARD_SPIRIT_STONE;
-    public static final Item QUALITY_SPIRIT_STONE;
-    public static final Item BEST_SPIRIT_STONE;
+//    public static final Item QUALITY_SPIRIT_STONE;
+//    public static final Item BEST_SPIRIT_STONE;
     public static final Item INFERIOR_SPIRIT_CRYSTAL;
-    public static final Item STANDARD_SPIRIT_CRYSTAL;
-    public static final Item QUALITY_SPIRIT_CRYSTAL;
-    public static final Item BEST_SPIRIT_CRYSTAL;
+//    public static final Item STANDARD_SPIRIT_CRYSTAL;
+//    public static final Item QUALITY_SPIRIT_CRYSTAL;
+//    public static final Item BEST_SPIRIT_CRYSTAL;
 
     public static final BasicToolsItem PLANT_IRON_TOOLS;
     public static final BasicToolsItem PLANT_GOLDEN_TOOLS;
@@ -278,12 +278,12 @@ public class Items {
 
         INFERIOR_SPIRIT_STONE = registerSpirit("inferior_spirit_stone", SpiritPropertyType.NONE, SpiritConsistences.INFERIOR_STONE);
         STANDARD_SPIRIT_STONE = registerSpirit("standard_spirit_stone", SpiritPropertyType.NONE, SpiritConsistences.STANDARD_STONE);
-        QUALITY_SPIRIT_STONE = registerSpirit("quality_spirit_stone", SpiritPropertyType.NONE, SpiritConsistences.QUALITY_STONE);
-        BEST_SPIRIT_STONE = registerSpirit("best_spirit_stone", SpiritPropertyType.NONE, SpiritConsistences.BEST_STONE);
+//        QUALITY_SPIRIT_STONE = registerSpirit("quality_spirit_stone", SpiritPropertyType.NONE, SpiritConsistences.QUALITY_STONE);
+//        BEST_SPIRIT_STONE = registerSpirit("best_spirit_stone", SpiritPropertyType.NONE, SpiritConsistences.BEST_STONE);
         INFERIOR_SPIRIT_CRYSTAL = registerSpirit("inferior_spirit_crystal", SpiritPropertyType.NONE, SpiritConsistences.INFERIOR_CRYSTAL);
-        STANDARD_SPIRIT_CRYSTAL = registerSpirit("standard_spirit_crystal", SpiritPropertyType.NONE, SpiritConsistences.STANDARD_CRYSTAL);
-        QUALITY_SPIRIT_CRYSTAL = registerSpirit("quality_spirit_crystal", SpiritPropertyType.NONE, SpiritConsistences.QUALITY_CRYSTAL);
-        BEST_SPIRIT_CRYSTAL = registerSpirit("best_spirit_crystal", SpiritPropertyType.NONE, SpiritConsistences.BEST_CRYSTAL);
+//        STANDARD_SPIRIT_CRYSTAL = registerSpirit("standard_spirit_crystal", SpiritPropertyType.NONE, SpiritConsistences.STANDARD_CRYSTAL);
+//        QUALITY_SPIRIT_CRYSTAL = registerSpirit("quality_spirit_crystal", SpiritPropertyType.NONE, SpiritConsistences.QUALITY_CRYSTAL);
+//        BEST_SPIRIT_CRYSTAL = registerSpirit("best_spirit_crystal", SpiritPropertyType.NONE, SpiritConsistences.BEST_CRYSTAL);
 
         PLANT_IRON_TOOLS = new BasicToolsItem(ToolMaterials.PLANT_IRON, "plant_iron", 1.0f);
         PLANT_GOLDEN_TOOLS = new BasicToolsItem(ToolMaterials.PLANT_GOLD, "plant_golden", 1.0f);

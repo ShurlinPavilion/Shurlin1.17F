@@ -59,16 +59,16 @@ public class PlantWandItem extends Item {
 
     @Override//TEMPORARY
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-//        CultivatedPlayerAccessor accessor = (CultivatedPlayerAccessor) player;
+        CultivatedPlayerAccessor accessor = (CultivatedPlayerAccessor) player;
 //        if (accessor.getRealm() == null) {
 //            accessor.cultivate();
 //        }
-//        System.out.println(((CultivatedPlayerAccessor)player).getRating());
-//        player.sendMessage(accessor.getDescribeText(), false);
-//        ItemStack stack = new ItemStack(net.minecraft.item.Items.FISHING_ROD);
-//        stack.addEnchantment(Enchantments.LUCK_OF_THE_SEA, 100);
-//        stack.addEnchantment(Enchantments.LURE, 3);
-//        player.getInventory().insertStack(stack);
+        System.out.println(((CultivatedPlayerAccessor)player).getRating());
+        player.sendMessage(accessor.getDescribeText(), false);
+        ItemStack stack = new ItemStack(net.minecraft.item.Items.FISHING_ROD);
+        stack.addEnchantment(Enchantments.LUCK_OF_THE_SEA, 100);
+        stack.addEnchantment(Enchantments.LURE, 3);
+        player.getInventory().insertStack(stack);
         return super.use(world, player, hand);
     }
 }

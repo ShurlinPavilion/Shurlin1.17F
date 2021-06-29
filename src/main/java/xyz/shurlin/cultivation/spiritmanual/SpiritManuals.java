@@ -1,7 +1,7 @@
 package xyz.shurlin.cultivation.spiritmanual;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import xyz.shurlin.cultivation.level.ManualLevel;
+import xyz.shurlin.cultivation.spiritmanual.attack.FireballSM;
 
 import java.util.Vector;
 

@@ -1,12 +1,14 @@
-package xyz.shurlin.cultivation.spiritmanual;
+package xyz.shurlin.cultivation.spiritmanual.attack;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.world.World;
 import xyz.shurlin.cultivation.level.ManualLevel;
+import xyz.shurlin.cultivation.spiritmanual.SpiritManual;
+import xyz.shurlin.cultivation.spiritmanual.SpiritManualType;
 
 public class FireballSM extends SpiritManual {
-    FireballSM(ManualLevel level, long consume) {
+    public FireballSM(ManualLevel level, long consume) {
         super(level, consume, SpiritManualType.ATTACK);
     }
 
