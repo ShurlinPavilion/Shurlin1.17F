@@ -1,3 +1,5 @@
+[Deprecation] See: [ShurlinPavilion/Shurlin#1.17](https://github.com/ShurlinPavilion/Shurlin/branch/1.17)
+
 # Hi, I'm Garay Shurlin
 
 ### I'm a modder as well as a student.
